@@ -15,5 +15,6 @@ public class OpenApiConfig {
                         .title("Ticketbook API")
                         .version("1.0")
                         .description("API documentation using SpringDoc"));
+        
     }
 }
