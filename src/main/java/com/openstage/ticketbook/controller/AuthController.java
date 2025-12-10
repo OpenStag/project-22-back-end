@@ -1,7 +1,7 @@
 package com.openstage.ticketbook.controller;
 
 import com.openstage.ticketbook.dto.*;
-import com.openstage.ticketbook.service.UserService;
+import com.openstage.ticketbook.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
-@Tag(name = "User Controller", description = "Endpoints for managing Users")
+@Tag(name = "Auth Controller", description = "Endpoints for user authentication")
 public class AuthController {
-    private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/signup")
     @Operation(summary = "Add a new User")
@@ -28,7 +28,7 @@ public class AuthController {
     ) {
         try {
             // Success: Return 201 Created and the JSON Data
-            UserResponseDTO response = userService.registerUser(request);
+            UserResponseDTO response = authService.registerUser(request);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
 
         } catch (RuntimeException e) {
@@ -45,7 +45,7 @@ public class AuthController {
             HttpServletRequest httpServletRequest) {
 
         try {
-            LoginResponseDTO response = userService.loginUser(request);
+            LoginResponseDTO response = authService.loginUser(request);
 
             // Create a session
             HttpSession newSession = httpServletRequest.getSession(true);
