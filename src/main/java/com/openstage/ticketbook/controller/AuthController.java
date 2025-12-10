@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
 @Tag(name = "User Controller", description = "Endpoints for managing Users")
-public class UserController {
+public class AuthController {
     private final UserService userService;
 
     @PostMapping("/signup")
