@@ -21,19 +21,24 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
+    // Signup Endpoint
     @PostMapping("/signup")
     @Operation(summary = "Add a new User")
-    public ResponseEntity<?> signup(
+    public ResponseEntity<@NonNull ResponseDTO<UserResponseDTO>> signup(
             @RequestBody @Valid UserRequestDTO request
     ) {
         try {
             // Success: Return 201 Created and the JSON Data
             UserResponseDTO response = authService.registerUser(request);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    new ResponseDTO<>(true, "User registered successfully", response)
+            );
 
         } catch (RuntimeException e) {
             // Error: Return 400 Bad Request and the error message string
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ResponseDTO<>(false, e.getMessage(), null)
+            );
         }
     }
 
@@ -45,6 +50,13 @@ public class AuthController {
             HttpServletRequest httpServletRequest) {
 
         try {
+            // Check if user already logged in
+            if (authService.isUserAlreadyLoggedIn(httpServletRequest)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        new ResponseDTO<>(false, "User already logged in", null)
+                );
+            }
+
             LoginResponseDTO response = authService.loginUser(request);
 
             // Create a session
@@ -64,5 +76,24 @@ public class AuthController {
                     new ResponseDTO<>(false, e.getMessage(), null)
             );
         }
+    }
+
+    // Logout Endpoint
+    @PostMapping("/logout")
+    @Operation(summary = "Logout a User")
+    public ResponseEntity<@NonNull ResponseDTO<String>> logout(
+            HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession(false);
+        if (session == null) {
+            // Already logged out
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ResponseDTO<>(false, "No active session found", null)
+            );
+        }
+        session.invalidate();
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseDTO<>(true, "Logout successful", null)
+        );
     }
 }
