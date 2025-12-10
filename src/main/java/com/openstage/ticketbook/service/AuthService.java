@@ -6,6 +6,8 @@ import com.openstage.ticketbook.dto.UserRequestDTO;
 import com.openstage.ticketbook.dto.UserResponseDTO;
 import com.openstage.ticketbook.model.User;
 import com.openstage.ticketbook.repo.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -73,5 +75,25 @@ public class AuthService {
                 user.getEmail(),
                 user.getRole()
         );
+    }
+
+    // Utility Method to check user role from session
+    public boolean hasRole(HttpServletRequest request, String requiredRole) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("USER_ID") == null) {
+            return false;
+        }
+        Long userId = (Long) session.getAttribute("USER_ID");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Error: User not found."));
+
+        // If the roles match then return true
+        return user.getRole().equals(requiredRole);
+    }
+
+    // Utility Method to check if user is already logged in
+    public boolean isUserAlreadyLoggedIn(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("USER_ID") != null;
     }
 }
