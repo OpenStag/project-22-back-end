@@ -6,20 +6,19 @@ import com.openstage.ticketbook.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*")
 @Tag(name = "User Controller", description = "Endpoints for managing Users")
 public class UserController {
-    
-    @Autowired
-    private UserService userService;
-    
+    private final UserService userService;
+
     @PostMapping("/signup")
     @Operation(summary = "Add a new User")
     public ResponseEntity<?> signup(
@@ -29,7 +28,7 @@ public class UserController {
             // Success: Return 201 Created and the JSON Data
             UserResponseDTO response = userService.registerUser(request);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
-            
+
         } catch (RuntimeException e) {
             // Error: Return 400 Bad Request and the error message string
             return ResponseEntity.badRequest().body(e.getMessage());
