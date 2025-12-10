@@ -23,10 +23,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Disable protection for development
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Allow ALL requests (public access)
+//                        .requestMatchers(
+//                                "/api/auth/**",
+//                                "/v3/api-docs/**",
+//                                "/swagger-ui/**",
+//                                "/swagger-ui.html"
+//                        ).permitAll()
+                        .anyRequest().permitAll()
                 );
+
         return http.build();
     }
 }
