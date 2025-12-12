@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -45,6 +48,39 @@ public class FilmService {
         return getFilmResponseDTO(newFilm, pricing, seat);
     }
 
+    // Get Upcoming Films
+    public List<FilmResponseDTO> getUpcomingFilms() {
+        List<Film> films = filmRepository.findByFilmDateGreaterThanEqualOrderByFilmDateAscFilmTimeAsc(
+                LocalDate.now()
+        );
+
+        return films.stream().map(
+                film -> getFilmResponseDTO(
+                        film,
+                        film.getPricing(),
+                        film.getSeat()
+                )
+        ).toList();
+    }
+
+    // Get All Films
+    public List<FilmResponseDTO> getAllFilms() {
+        List<Film> films = filmRepository.findAll();
+        return films.stream().map(
+                film -> getFilmResponseDTO(
+                        film,
+                        film.getPricing(),
+                        film.getSeat()
+                )
+        ).toList();
+    }
+
+    // TODO: Get Film by ID
+
+    // TODO: Update Film by ID
+
+    // TODO: Delete Film by ID
+
 
     // Helper method to convert Film, Pricing, and Seat to FilmResponseDTO
     private static FilmResponseDTO getFilmResponseDTO(Film newFilm, Pricing pricing, Seat seat) {
@@ -63,11 +99,4 @@ public class FilmService {
         return response;
     }
 
-    // TODO: Get All Films
-
-    // TODO: Get Film by ID
-
-    // TODO: Update Film by ID
-
-    // TODO: Delete Film by ID
 }
