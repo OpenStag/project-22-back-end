@@ -90,6 +90,15 @@ public class AuthService {
         // If the roles match then return true
         return user.getRole().equals(requiredRole);
     }
+    
+    public boolean isSameUser(HttpServletRequest request, Long id) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("USER_ID") == null) {
+            return false;
+        }
+        Long userId = (Long) session.getAttribute("USER_ID");
+        return userId.equals(id);
+    }
 
     // Utility Method to check if user is already logged in
     public boolean isUserAlreadyLoggedIn(HttpServletRequest request) {
