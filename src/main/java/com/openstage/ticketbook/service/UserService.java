@@ -44,11 +44,18 @@ public class UserService {
     }
 
     // Update User by ID(ROLE_ADMIN,ROLE_USER)
-    public Optional<User> updateUser(Long id, UserRequestDTO userRequestDTO) {
+    public Optional<UserResponseDTO> updateUser(Long id, UserRequestDTO userRequestDTO) {
         return userRepository.findById(id).map(user -> {
             user.setUsername(userRequestDTO.getUsername());
             user.setEmail(userRequestDTO.getEmail());
-            return userRepository.save(user);
+            User savedUser = userRepository.save(user);
+            return new UserResponseDTO(
+                    savedUser.getId(),
+                    savedUser.getUsername(),
+                    savedUser.getEmail(),
+                    savedUser.isActive(),
+                    savedUser.getCreatedAt()
+            );
         });
     }
 

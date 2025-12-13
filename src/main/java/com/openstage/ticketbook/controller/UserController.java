@@ -46,7 +46,7 @@ public class UserController {
 
     // Update User by ID
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<User>> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO, HttpServletRequest request) {
+    public ResponseEntity<ResponseDTO<UserResponseDTO>> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO, HttpServletRequest request) {
         if (!authService.hasRole(request, "ROLE_ADMIN") && !authService.isSameUser(request, id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDTO<>(false, "Access denied", null));
         }
