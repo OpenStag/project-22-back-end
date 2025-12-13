@@ -75,11 +75,45 @@ public class FilmService {
         ).toList();
     }
 
-    // TODO: Get Film by ID
+    // Get Film by ID
+    public FilmResponseDTO getFilmById(Long filmId) {
+        Film film = filmRepository.findById(filmId)
+                .orElseThrow(() -> new RuntimeException("Film not found with id: " + filmId));
+        return getFilmResponseDTO(film, film.getPricing(), film.getSeat());
+    }
 
-    // TODO: Update Film by ID
+    // Update Film by ID
+    public FilmResponseDTO updateFilm(Long filmId, FilmRequestDTO request) {
+        Film film = filmRepository.findById(filmId)
+                .orElseThrow(() -> new RuntimeException("Film not found with id: " + filmId));
 
-    // TODO: Delete Film by ID
+        film.setFilmTitle(request.getFilmTitle());
+        film.setFilmDate(request.getFilmDate());
+        film.setFilmTime(request.getFilmTime());
+        film.setImageUrl(
+                request.getImageUrl() != null ? request.getImageUrl() : film.getImageUrl()
+        );
+
+        Pricing pricing = film.getPricing();
+        pricing.setLevel1Price(request.getL1Price());
+        pricing.setLevel2Price(request.getL2Price());
+        pricing.setBoxPrice(request.getBoxPrice());
+
+        filmRepository.save(film);
+
+        log.info("Updated film with id: {}", filmId);
+
+        return getFilmResponseDTO(film, pricing, film.getSeat());
+    }
+
+    // Delete Film by ID
+    public void deleteFilm(Long filmId) {
+        if (!filmRepository.existsById(filmId)) {
+            throw new RuntimeException("Film not found with id: " + filmId);
+        }
+        filmRepository.deleteById(filmId);
+        log.info("Deleted film with id: {}", filmId);
+    }
 
 
     // Helper method to convert Film, Pricing, and Seat to FilmResponseDTO
