@@ -41,7 +41,7 @@ public class AuthService {
         User savedUser = userRepository.save(newUser);
 
         //log
-        log.info("Added new film: {}", newUser.getUsername());
+        log.info("Registered new user: {}", newUser.getUsername());
 
         // 4. Map Model -> Response DTO
         return new UserResponseDTO(
@@ -89,6 +89,16 @@ public class AuthService {
 
         // If the roles match then return true
         return user.getRole().equals(requiredRole);
+    }
+    
+    // Utility Method to check if user is the same
+    public boolean isSameUser(HttpServletRequest request, Long id) {
+        if (!isUserAlreadyLoggedIn(request)) {
+            return false;
+        }
+        HttpSession session = request.getSession(false);
+        Long userId = (Long) session.getAttribute("USER_ID");
+        return userId.equals(id);
     }
 
     // Utility Method to check if user is already logged in
