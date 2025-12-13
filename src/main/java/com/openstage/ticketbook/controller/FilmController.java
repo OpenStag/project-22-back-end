@@ -53,4 +53,39 @@ public class FilmController {
                 new ResponseDTO<>(true, "All films retrieved successfully", films)
         );
     }
+
+    // Get Film by ID
+    @GetMapping("/{filmId}")
+    @Operation(summary = "Get a film by its ID")
+    public ResponseEntity<@NonNull ResponseDTO<FilmResponseDTO>> getFilmById(
+            @PathVariable Long filmId
+    ) {
+        FilmResponseDTO film = filmService.getFilmById(filmId);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(true, "Film retrieved successfully", film)
+        );
+    }
+
+    // Update Film by ID
+    @PutMapping("/{filmId}")
+    @Operation(summary = "Update a film by its ID")
+    public ResponseEntity<@NonNull ResponseDTO<FilmResponseDTO>> updateFilm(
+            @PathVariable Long filmId,
+            @Valid @RequestBody FilmRequestDTO request
+    ) {
+        FilmResponseDTO updatedFilm = filmService.updateFilm(filmId, request);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(true, "Film updated successfully", updatedFilm)
+        );
+    }
+
+    // Delete Film by ID
+    @DeleteMapping("/{filmId}")
+    @Operation(summary = "Delete a film by its ID")
+    public ResponseEntity<@NonNull ResponseDTO<String>> deleteFilm(@PathVariable Long filmId) {
+        filmService.deleteFilm(filmId);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(true, "Film deleted successfully", null)
+        );
+    }
 }
